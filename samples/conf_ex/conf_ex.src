@@ -1,0 +1,18 @@
+[group1]
+strkey=value1
+intkey=100
+dblkey=999.99
+
+[group2]
+key1=first key
+key2=second key
+key3=third key
+key4=fourth key
+
+[first key]
+main=Description of group "first key"
+age=18
+
+[second key]
+main=Description of group "second key"
+age=19
