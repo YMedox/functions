@@ -4,7 +4,7 @@
 
 typedef void (*Callback)(void);
 void timer_loop(bool force_read);
-unsigned long timer_getSleepage();
+unsigned long timer_getSleepage(unsigned long sleepage = 0);
 void timer_killall();
 
 class cTimer {

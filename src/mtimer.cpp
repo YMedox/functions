@@ -87,7 +87,9 @@ void timer_loop(bool force_read) {
 
 //Возвращает время до ближайшей сработки любого из таймеров. Вызывается сразу после timer_loop();
 //Можно использовать для отправки вызывающего потока в сон.
-unsigned long timer_getSleepage() {
+//Параметр - время простоя по умолчанию, если нет ни одного таймера.
+unsigned long timer_getSleepage(unsigned long sleepage) {
+   if(!last) return sleepage;
    get_current_time();
    if(next_run > current_time) return next_run - current_time;
    return 0L;
