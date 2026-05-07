@@ -55,7 +55,6 @@ class cLogger {
      std::vector<std::string> v_messages;
      std::mutex message_mutex;
      size_t half_of_queue, doubled_queue;
-     std::stringstream os;
      std::map<pthread_t, std::string> msgs;
      std::map<pthread_t, bool> lvls;
   public:
@@ -66,9 +65,12 @@ class cLogger {
         message_mutex.lock();
         auto it = msgs.find(thread);
         auto lv = lvls.find(thread);
+        std::stringstream os;
         os.str("");
         os << x;
         if(it == msgs.end()) {
+           // защита от случайно переданных возврата каретки и переноса строки
+           if(os.str().back() == *ENDL || os.str().back() == '\r') { message_mutex.unlock(); return *this; }
            uint8_t level = atoi(os.str().c_str());
            if(params.log_level >= level) {
              msgs.insert(std::pair<pthread_t, std::string>(thread, getTimePrefix()+c_level[level]));
@@ -82,16 +84,16 @@ class cLogger {
         } else {
           if(lv->second) {
             msgs[thread] += os.str();
-            if(msgs[thread].back() == '\n') {
+            if(msgs[thread].back() == *ENDL) {
               if(params.sink_cout) { std::cout<<it->second; }
               if(params.sink_log)  { std::string s = it->second; s.pop_back(); v_messages.push_back(s); }
-              msgs.erase(it);
-              lvls.erase(lv);
+              do { msgs.erase(it); it = msgs.find(thread); } while (it != msgs.end());
+              do { lvls.erase(lv); lv = lvls.find(thread); } while (lv != lvls.end());
             }
           } else {
-            if(os.str().back() == '\n') {
-              msgs.erase(it);
-              lvls.erase(lv);
+            if(os.str().back() == *ENDL) {
+              do { msgs.erase(it); it = msgs.find(thread); } while (it != msgs.end());
+              do { lvls.erase(lv); lv = lvls.find(thread); } while (lv != lvls.end());
             }
           }
         }
