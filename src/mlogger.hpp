@@ -30,7 +30,7 @@
 struct cLogParams {
   char     	*path;               //Путь к файлу. Если NULL - для первого логгера определится автоматически
   uint8_t  	num_files;           //Количество файлов в ротации.
-  long          max_size_of_file;    //Ориентир для максимального размера файла.
+  long      max_size_of_file;    //Ориентир для максимального размера файла.
   int      	max_messages;        //Ориентир для максимального количества записей лога в памяти, ожидающих сброса в файл.
   bool     	sink_cout;           //true = Выводить на экран сообщения. Можно менять по ходу программы.
   bool     	sink_log;            //true = записывать в файл. файл открывается всегда. Можно менять по ходу программы.
@@ -57,6 +57,7 @@ class cLogger {
      size_t half_of_queue, doubled_queue;
      std::map<pthread_t, std::string> msgs;
      std::map<pthread_t, bool> lvls;
+     std::stringstream os;
   public:
      cLogger(cLogParams *p);
      ~cLogger();
@@ -65,7 +66,6 @@ class cLogger {
         message_mutex.lock();
         auto it = msgs.find(thread);
         auto lv = lvls.find(thread);
-        std::stringstream os;
         os.str("");
         os << x;
         if(it == msgs.end()) {
@@ -87,13 +87,13 @@ class cLogger {
             if(msgs[thread].back() == *ENDL) {
               if(params.sink_cout) { std::cout<<it->second; }
               if(params.sink_log)  { std::string s = it->second; s.pop_back(); v_messages.push_back(s); }
-              do { msgs.erase(it); it = msgs.find(thread); } while (it != msgs.end());
-              do { lvls.erase(lv); lv = lvls.find(thread); } while (lv != lvls.end());
+              msgs.erase(it);
+              lvls.erase(lv);
             }
           } else {
             if(os.str().back() == *ENDL) {
-              do { msgs.erase(it); it = msgs.find(thread); } while (it != msgs.end());
-              do { lvls.erase(lv); lv = lvls.find(thread); } while (lv != lvls.end());
+              msgs.erase(it);
+              lvls.erase(lv);
             }
           }
         }
