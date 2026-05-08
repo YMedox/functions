@@ -40,7 +40,7 @@ unsigned long interval;
 //Защелка для контроля выхода из программы
 bool bCont = true;
 //Вспомогательный map, чтобы случайным образом использовать измеряемые величины в выводе
-std::map<int, UnitType> types = {{0, UnitType::PERCENT}, {1, UnitType::DEGREE}, {2, UnitType::VOLT}, {3, UnitType::AMPERE}, {4, UnitType::WATT}, {5, UnitType::NONE} };
+std::map<int, UnitType> types = {{0, UnitType::PERCENT}, {1, UnitType::DEGREE}, {2, UnitType::VOLT}, {3, UnitType::AMPERE}, {4, UnitType::WATT}, {5, UnitType::HOUR}, {6, UnitType::MINUTE}, {7, UnitType::SECOND}, {8, UnitType::NONE} };
 
 
 //Запуск логирования. Параметры не по умолчанию!
@@ -144,7 +144,7 @@ void timerFunction() {
     double number = bounded_rand(gn._min, gn._max) + double(bounded_rand(0,10))/10;
     char buf[24];
     sprintf(buf, "%9.1f", number);
-    logcppinfo<<"Число: "<<buf<<". Прописью: "<<NumberToWords::convert(number, types[bounded_rand(0,5)])<<ENDL;
+    logcppinfo<<"Число: "<<buf<<". Прописью: "<<NumberToWords::convert(number, types[bounded_rand(0,8)])<<ENDL;
     j++;
   } else {  //переходим к следующей группе
     logcppinfo<<"Закончили считать группу "<<gn._name<<ENDL;

@@ -11,17 +11,21 @@ enum class UnitType {
     VOLT,
     AMPERE,
     WATT,
+    HOUR,
+    MINUTE,
+    SECOND,
     NONE
 };
 
 class NumberToWords {
 public:
     static std::string convert(double number, UnitType unit = UnitType::NONE);
+    static std::string convertSecondsToTime(double totalSeconds);
 
 private:
-    static std::string getOnes(int number, bool isFractional);
+    static std::string getOnes(int number, bool isFractional, bool isFemail);
     static std::string getThousandsEnding(int ending);
-    static std::string numberToWords(int number, bool isFractional);
+    static std::string numberToWords(int number, bool isFractional, bool isFemail);
     static std::string decimalPartToWords(int decimalPart);
     static std::string getUnitSuffix(UnitType unit, int baseNumber, bool isFractional);
 
